@@ -11,6 +11,7 @@ smartglass_proto = Proto("XBSG", "Xbox One SmartGlass Protocol")
 local hf = {}
 function add_field(proto_field_constructor, name, desc, ...)
     local field_name = "xbox_sg." .. name
+    name = string.gsub(name, "%.", "_")
     -- If the description is omitted, use the name as label
     if type(desc) == "string" then
         hf[name] = proto_field_constructor(field_name, desc, ...)
@@ -154,51 +155,51 @@ header_bitmask = {
     ["msg_type"] = 0xFFF,
 }
 
-add_field(ProtoField.bytes, "message_header", "Message Header", base.SPACE)
-add_field(ProtoField.uint16, "message_header_protected_payload_length", "Protected Payload Length", base.HEX_DEC)
-add_field(ProtoField.uint32, "message_header_sequence", "Sequence Number", base.DEC)
-add_field(ProtoField.uint32, "message_header_target_id", "Target Participant Id", base.HEX_DEC)
-add_field(ProtoField.uint32, "message_header_source_id", "Source Participant Id", base.HEX_DEC)
-add_field(ProtoField.uint16, "message_header_flags", "Flags", base.HEX)
-add_field(ProtoField.uint16, "message_header_flags_version", "Version", base.DEC, nil, header_bitmask.version) -- 2 bits
-add_field(ProtoField.bool, "message_header_flags_need_ack", "Need Ack", 16, nil, header_bitmask.need_ack) -- 1 bit
-add_field(ProtoField.bool, "message_header_flags_is_fragment", "Is Fragment", 16, nil, header_bitmask.is_fragment) -- 1 bit
-add_field(ProtoField.uint16, "message_header_flags_msg_type", "Message Type", base.DEC, message_types, header_bitmask.msg_type) -- 12 bits
-add_field(ProtoField.uint64, "message_header_channel_id", "Channel Id", base.HEX_DEC)
+add_field(ProtoField.bytes, "message.header", "Message Header", base.SPACE)
+add_field(ProtoField.uint16, "message.header.protected_payload_length", "Protected Payload Length", base.HEX_DEC)
+add_field(ProtoField.uint32, "message.header.sequence", "Sequence Number", base.DEC)
+add_field(ProtoField.uint32, "message.header.target_id", "Target Participant Id", base.HEX_DEC)
+add_field(ProtoField.uint32, "message.header.source_id", "Source Participant Id", base.HEX_DEC)
+add_field(ProtoField.uint16, "message.header.flags", "Flags", base.HEX)
+add_field(ProtoField.uint16, "message.header.flags.version", "Version", base.DEC, nil, header_bitmask.version) -- 2 bits
+add_field(ProtoField.bool, "message.header.flags.need_ack", "Need Ack", 16, nil, header_bitmask.need_ack) -- 1 bit
+add_field(ProtoField.bool, "message.header.flags.is_fragment", "Is Fragment", 16, nil, header_bitmask.is_fragment) -- 1 bit
+add_field(ProtoField.uint16, "message.header.flags.msg_type", "Message Type", base.DEC, message_types, header_bitmask.msg_type) -- 12 bits
+add_field(ProtoField.uint64, "message.header.channel_id", "Channel Id", base.HEX_DEC)
 
-add_field(ProtoField.none, "message_protected_payload", "Protected Payload")
-add_field(ProtoField.none, "message_hash", "Hash")
+add_field(ProtoField.none, "message.protected_payload", "Protected Payload")
+add_field(ProtoField.none, "message.hash", "Hash")
 
 
 -- PowerOn request fields
-add_field(ProtoField.uint16, "poweron_request_unprotected_payload_length", "Unprotected Payload Length", base.HEX_DEC)
-add_field(ProtoField.uint16, "poweron_request_version", "Version", base.HEX_DEC)
-add_field(ProtoField.none, "poweron_request_unprotected_payload", "Unprotected Payload")
-add_field(ProtoField.uint16, "poweron_request_liveid_length", "Live ID Length", base.HEX_DEC)
-add_field(ProtoField.string, "poweron_request_liveid", "Live ID")
+add_field(ProtoField.uint16, "poweron_request.unprotected_payload_length", "Unprotected Payload Length", base.HEX_DEC)
+add_field(ProtoField.uint16, "poweron_request.version", "Version", base.HEX_DEC)
+add_field(ProtoField.none, "poweron_request.unprotected_payload", "Unprotected Payload")
+add_field(ProtoField.uint16, "poweron_request.liveid_length", "Live ID Length", base.HEX_DEC)
+add_field(ProtoField.string, "poweron_request.liveid", "Live ID")
 
 -- Discovery request fields
-add_field(ProtoField.uint16, "discovery_request_unprotected_payload_length", "Unprotected Payload Length", base.HEX_DEC)
-add_field(ProtoField.uint16, "discovery_request_version", "Version", base.HEX_DEC)
-add_field(ProtoField.none, "discovery_request_unprotected_payload", "Unprotected Payload")
-add_field(ProtoField.uint32, "discovery_request_flags", "Flags", base.HEX_DEC)
-add_field(ProtoField.uint16, "discovery_request_client_type", "Client Type", base.HEX_DEC)
-add_field(ProtoField.uint16, "discovery_request_minimum_version", "Minimum Version", base.HEX_DEC)
-add_field(ProtoField.uint16, "discovery_request_maximum_version", "Maximum Version", base.HEX_DEC)
+add_field(ProtoField.uint16, "discovery_request.unprotected_payload_length", "Unprotected Payload Length", base.HEX_DEC)
+add_field(ProtoField.uint16, "discovery_request.version", "Version", base.HEX_DEC)
+add_field(ProtoField.none, "discovery_request.unprotected_payload", "Unprotected Payload")
+add_field(ProtoField.uint32, "discovery_request.flags", "Flags", base.HEX_DEC)
+add_field(ProtoField.uint16, "discovery_request.client_type", "Client Type", base.HEX_DEC)
+add_field(ProtoField.uint16, "discovery_request.minimum_version", "Minimum Version", base.HEX_DEC)
+add_field(ProtoField.uint16, "discovery_request.maximum_version", "Maximum Version", base.HEX_DEC)
 
 -- Discovery response fields
-add_field(ProtoField.uint16, "discovery_response_unprotected_payload_length", "Unprotected Payload Length", base.HEX_DEC)
-add_field(ProtoField.uint16, "discovery_response_version", "Version", base.HEX_DEC)
-add_field(ProtoField.none, "discovery_response_unprotected_payload", "Unprotected Payload")
-add_field(ProtoField.uint32, "discovery_response_flags", "Flags", base.HEX_DEC)
-add_field(ProtoField.uint16, "discovery_response_type", "Type", base.HEX_DEC)
-add_field(ProtoField.uint16, "discovery_response_name_length", "Name Length", base.HEX_DEC)
-add_field(ProtoField.string, "discovery_response_name", "Name")
-add_field(ProtoField.uint16, "discovery_response_uuid_length", "UUID Length", base.HEX_DEC)
-add_field(ProtoField.string, "discovery_response_uuid", "UUID")
-add_field(ProtoField.bytes, "discovery_response_padding", "Padding", base.SPACE)
-add_field(ProtoField.uint16, "discovery_response_certificate_length", "Certificate Length", base.HEX_DEC)
-add_field(ProtoField.bytes, "discovery_response_certificate", "Certificate", base.SPACE)
+add_field(ProtoField.uint16, "discovery_response.unprotected_payload_length", "Unprotected Payload Length", base.HEX_DEC)
+add_field(ProtoField.uint16, "discovery_response.version", "Version", base.HEX_DEC)
+add_field(ProtoField.none, "discovery_response.unprotected_payload", "Unprotected Payload")
+add_field(ProtoField.uint32, "discovery_response.flags", "Flags", base.HEX_DEC)
+add_field(ProtoField.uint16, "discovery_response.type", "Type", base.HEX_DEC)
+add_field(ProtoField.uint16, "discovery_response.name_length", "Name Length", base.HEX_DEC)
+add_field(ProtoField.string, "discovery_response.name", "Name")
+add_field(ProtoField.uint16, "discovery_response.uuid_length", "UUID Length", base.HEX_DEC)
+add_field(ProtoField.string, "discovery_response.uuid", "UUID")
+add_field(ProtoField.bytes, "discovery_response.padding", "Padding", base.SPACE)
+add_field(ProtoField.uint16, "discovery_response.certificate_length", "Certificate Length", base.HEX_DEC)
+add_field(ProtoField.bytes, "discovery_response.certificate", "Certificate", base.SPACE)
 
 publickey_types = {
     [0x00] = "EC_DH_P256",
@@ -208,25 +209,25 @@ publickey_types = {
 }
 
 -- Connect request fields
-add_field(ProtoField.uint16, "connect_request_unprotected_payload_length", "Unprotected Payload Length", base.HEX_DEC)
-add_field(ProtoField.uint16, "connect_request_protected_payload_length", "Protected Payload Length", base.HEX_DEC)
-add_field(ProtoField.uint16, "connect_request_version", "Version", base.HEX_DEC)
-add_field(ProtoField.none, "connect_request_unprotected_payload", "Unprotected Payload")
-add_field(ProtoField.bytes, "connect_request_uuid", "UUID", base.SPACE)
-add_field(ProtoField.uint16, "connect_request_public_key_type", "PublicKey Type", base.HEX_DEC, publickey_types)
-add_field(ProtoField.bytes, "connect_request_public_key", "PublicKey", base.SPACE)
-add_field(ProtoField.bytes, "connect_request_iv", "IV", base.SPACE)
-add_field(ProtoField.none, "connect_request_protected_payload", "Protected Payload")
-add_field(ProtoField.none, "connect_request_hash", "Hash")
+add_field(ProtoField.uint16, "connect_request.unprotected_payload_length", "Unprotected Payload Length", base.HEX_DEC)
+add_field(ProtoField.uint16, "connect_request.protected_payload_length", "Protected Payload Length", base.HEX_DEC)
+add_field(ProtoField.uint16, "connect_request.version", "Version", base.HEX_DEC)
+add_field(ProtoField.none, "connect_request.unprotected_payload", "Unprotected Payload")
+add_field(ProtoField.bytes, "connect_request.uuid", "UUID", base.SPACE)
+add_field(ProtoField.uint16, "connect_request.public_key_type", "PublicKey Type", base.HEX_DEC, publickey_types)
+add_field(ProtoField.bytes, "connect_request.public_key", "PublicKey", base.SPACE)
+add_field(ProtoField.bytes, "connect_request.iv", "IV", base.SPACE)
+add_field(ProtoField.none, "connect_request.protected_payload", "Protected Payload")
+add_field(ProtoField.none, "connect_request.hash", "Hash")
 
 -- Connect response fields
-add_field(ProtoField.uint16, "connect_response_unprotected_payload_length", "Unprotected Payload Length", base.HEX_DEC)
-add_field(ProtoField.uint16, "connect_response_protected_payload_length", "Protected Payload Length", base.HEX_DEC)
-add_field(ProtoField.uint16, "connect_response_version", "Version", base.HEX_DEC)
-add_field(ProtoField.none, "connect_response_unprotected_payload", "Unprotected Payload")
-add_field(ProtoField.bytes, "connect_response_iv", "IV", base.SPACE)
-add_field(ProtoField.none, "connect_response_protected_payload", "Protected Payload")
-add_field(ProtoField.none, "connect_response_hash", "Hash")
+add_field(ProtoField.uint16, "connect_response.unprotected_payload_length", "Unprotected Payload Length", base.HEX_DEC)
+add_field(ProtoField.uint16, "connect_response.protected_payload_length", "Protected Payload Length", base.HEX_DEC)
+add_field(ProtoField.uint16, "connect_response.version", "Version", base.HEX_DEC)
+add_field(ProtoField.none, "connect_response.unprotected_payload", "Unprotected Payload")
+add_field(ProtoField.bytes, "connect_response.iv", "IV", base.SPACE)
+add_field(ProtoField.none, "connect_response.protected_payload", "Protected Payload")
+add_field(ProtoField.none, "connect_response.hash", "Hash")
 
 -- IMPORTANT: Add the fields to the proto
 smartglass_proto.fields = hf
