@@ -11,6 +11,7 @@ nano_proto = Proto("NANO-RTP", "Xbox Nano Protocol")
 local hf = {}
 function add_field(proto_field_constructor, name, desc, ...)
     local field_name = "nano." .. name
+    name = string.gsub(name, "%.", "_")
     -- If the description is omitted, use the name as label
     if type(desc) == "string" then
         hf[name] = proto_field_constructor(field_name, desc, ...)
@@ -108,25 +109,25 @@ local header_bitmask = {
 
 local fields = nano_proto.fields
 add_field(ProtoField.none, "header", "# RTP Header #")
-add_field(ProtoField.uint16, "header_flags", "Flags", base.HEX)
-add_field(ProtoField.uint16, "header_flags_version", "Version", base.DEC, nil, header_bitmask.version) -- 2 bits
-add_field(ProtoField.bool, "header_flags_padding", "Padding", 16, nil, header_bitmask.padding) -- 1 bit
-add_field(ProtoField.bool, "header_flags_extension", "Extension", 16, nil, header_bitmask.extension) -- 1 bit
-add_field(ProtoField.uint16, "header_flags_csrc_count", "CSRC Count", base.DEC, nil, header_bitmask.csrc_count) -- 4 bits
-add_field(ProtoField.bool, "header_flags_marker", "Marker", 16, nil, header_bitmask.marker) -- 1 bit
-add_field(ProtoField.uint16, "header_flags_payload_type", "Payload Type", base.HEX_DEC, payload_type_string, header_bitmask.payload_type) -- 7 bits
+add_field(ProtoField.uint16, "header.flags", "Flags", base.HEX)
+add_field(ProtoField.uint16, "header.flags.version", "Version", base.DEC, nil, header_bitmask.version) -- 2 bits
+add_field(ProtoField.bool, "header.flags.padding", "Padding", 16, nil, header_bitmask.padding) -- 1 bit
+add_field(ProtoField.bool, "header.flags.extension", "Extension", 16, nil, header_bitmask.extension) -- 1 bit
+add_field(ProtoField.uint16, "header.flags.csrc_count", "CSRC Count", base.DEC, nil, header_bitmask.csrc_count) -- 4 bits
+add_field(ProtoField.bool, "header.flags.marker", "Marker", 16, nil, header_bitmask.marker) -- 1 bit
+add_field(ProtoField.uint16, "header.flags.payload_type", "Payload Type", base.HEX_DEC, payload_type_string, header_bitmask.payload_type) -- 7 bits
 
-add_field(ProtoField.uint16, "header_sequence_num", "Sequence Num", base.DEC)
-add_field(ProtoField.uint32, "header_timestamp", "Timestamp", base.HEX_DEC)
+add_field(ProtoField.uint16, "header.sequence_num", "Sequence Num", base.DEC)
+add_field(ProtoField.uint32, "header.timestamp", "Timestamp", base.HEX_DEC)
 
-add_field(ProtoField.uint32, "header_ssrc", "SSRC", base.HEX)
-add_field(ProtoField.uint16, "header_ssrc_connection_id", "Connection Id", base.HEX_DEC)
-add_field(ProtoField.uint16, "header_ssrc_channel_id", "Channel Id", base.HEX_DEC) 
+add_field(ProtoField.uint32, "header.ssrc", "SSRC", base.HEX)
+add_field(ProtoField.uint16, "header.ssrc.connection_id", "Connection Id", base.HEX_DEC)
+add_field(ProtoField.uint16, "header.ssrc.channel_id", "Channel Id", base.HEX_DEC) 
 
 -- Control Handshake
 add_field(ProtoField.bytes, "control_handshake", "ControlProtocol Handshake", base.SPACE)
-add_field(ProtoField.uint8, "control_handshake_type", "Type", base.HEX_DEC)
-add_field(ProtoField.uint16, "control_handshake_connection_id", "Connection Id", base.HEX_DEC)
+add_field(ProtoField.uint8, "control_handshake.type", "Type", base.HEX_DEC)
+add_field(ProtoField.uint16, "control_handshake.connection_id", "Connection Id", base.HEX_DEC)
 
 -- Channel Control
 local channel_control_type = {
@@ -138,32 +139,32 @@ local channel_control_type_string = invert(channel_control_type)
 
 
 add_field(ProtoField.none, "channel_control", "# Channel Control #")
-add_field(ProtoField.uint32, "channel_control_type", "Type", base.HEX_DEC, channel_control_type_string)
+add_field(ProtoField.uint32, "channel_control.type", "Type", base.HEX_DEC, channel_control_type_string)
 
-add_field(ProtoField.bytes, "channel_control_create", "Channel Create", base.SPACE)
-add_field(ProtoField.uint16, "channel_control_create_name_len", "Name Length", base.HEX_DEC)
-add_field(ProtoField.string, "channel_control_create_name", "Name", base.ASCII)
-add_field(ProtoField.uint32, "channel_control_create_flags", "Flags", base.HEX)
+add_field(ProtoField.bytes, "channel_control.create", "Channel Create", base.SPACE)
+add_field(ProtoField.uint16, "channel_control.create.name_len", "Name Length", base.HEX_DEC)
+add_field(ProtoField.string, "channel_control.create.name", "Name", base.ASCII)
+add_field(ProtoField.uint32, "channel_control.create.flags", "Flags", base.HEX)
 
-add_field(ProtoField.bytes, "channel_control_open", "Channel Open", base.SPACE)
-add_field(ProtoField.uint32, "channel_control_open_flags_sz", "Flags Size", base.DEC)
-add_field(ProtoField.bytes, "channel_control_open_flags", "Flags", base.SPACE)
+add_field(ProtoField.bytes, "channel_control.open", "Channel Open", base.SPACE)
+add_field(ProtoField.uint32, "channel_control.open.flags_sz", "Flags Size", base.DEC)
+add_field(ProtoField.bytes, "channel_control.open.flags", "Flags", base.SPACE)
 
-add_field(ProtoField.bytes, "channel_control_close", "Channel Close", base.SPACE)
-add_field(ProtoField.uint32, "channel_control_close_reason", "Reason", base.HEX_DEC)
+add_field(ProtoField.bytes, "channel_control.close", "Channel Close", base.SPACE)
+add_field(ProtoField.uint32, "channel_control.close.reason", "Reason", base.HEX_DEC)
 
 -- UDPHandshake
 add_field(ProtoField.none, "udp_handshake", "# UDP Handshake #")
-add_field(ProtoField.uint8, "udp_handshake_unknown", "Unknown", base.HEX_DEC)
+add_field(ProtoField.uint8, "udp_handshake.unknown", "Unknown", base.HEX_DEC)
 
 -- FEC Data
 add_field(ProtoField.none, "fec_data", "# FEC DATA #")
-add_field(ProtoField.uint8, "fec_data_type", "Type", base.HEX_DEC)
-add_field(ProtoField.uint32, "fec_data_unk2", "Unknown 2", base.HEX_DEC)
-add_field(ProtoField.uint16, "fec_data_unk3", "Unknown 3", base.HEX_DEC)
-add_field(ProtoField.uint8, "fec_data_unk4", "Unknown 4", base.HEX_DEC)
-add_field(ProtoField.uint16, "fec_data_payload_size", "Payload Size", base.HEX_DEC)
-add_field(ProtoField.bytes, "fec_data_payload", "Payload", base.SPACE)
+add_field(ProtoField.uint8, "fec_data.type", "Type", base.HEX_DEC)
+add_field(ProtoField.uint32, "fec_data.unk2", "Unknown 2", base.HEX_DEC)
+add_field(ProtoField.uint16, "fec_data.unk3", "Unknown 3", base.HEX_DEC)
+add_field(ProtoField.uint8, "fec_data.unk4", "Unknown 4", base.HEX_DEC)
+add_field(ProtoField.uint16, "fec_data.payload_size", "Payload Size", base.HEX_DEC)
+add_field(ProtoField.bytes, "fec_data.payload", "Payload", base.SPACE)
 
 -- StreamerMessage
 local streamer_type_audio_video = {
@@ -198,11 +199,11 @@ local streamer_message_string = {
 }
 
 add_field(ProtoField.none, "streamer_msg", "# StreamerMessage #")
-add_field(ProtoField.uint32, "streamer_msg_flags", "Flags", base.HEX)
-add_field(ProtoField.uint32, "streamer_msg_sequence_num", "Sequence Num", base.DEC)
-add_field(ProtoField.uint32, "streamer_msg_prev_sequence_num", "Prev Sequence Num", base.DEC)
-add_field(ProtoField.uint32, "streamer_msg_packet_type", "Packet Type", base.HEX_DEC)
-add_field(ProtoField.uint32, "streamer_msg_payload_size", "Payload Size", base.HEX_DEC)
+add_field(ProtoField.uint32, "streamer_msg.flags", "Flags", base.HEX)
+add_field(ProtoField.uint32, "streamer_msg.sequence_num", "Sequence Num", base.DEC)
+add_field(ProtoField.uint32, "streamer_msg.prev_sequence_num", "Prev Sequence Num", base.DEC)
+add_field(ProtoField.uint32, "streamer_msg.packet_type", "Packet Type", base.HEX_DEC)
+add_field(ProtoField.uint32, "streamer_msg.payload_size", "Payload Size", base.HEX_DEC)
 
 -- VIDEO messages
 local video_codec = {
@@ -221,53 +222,53 @@ local video_control_bitmask = {
     RequestKeyframe = 0x20
 }
 
-add_field(ProtoField.none, "video_format", "# Video Format #")
-add_field(ProtoField.uint32, "video_format_fps", "FPS", base.DEC)
-add_field(ProtoField.uint32, "video_format_width", "Width", base.DEC)
-add_field(ProtoField.uint32, "video_format_height", "Height", base.DEC)
-add_field(ProtoField.uint32, "video_format_codec", "Codec", base.DEC, video_codec_string)
-add_field(ProtoField.uint32, "video_format_bpp", "Bpp", base.DEC)
-add_field(ProtoField.uint32, "video_format_bytes", "Bytes", base.HEX_DEC)
-add_field(ProtoField.uint64, "video_format_redmask", "Red Mask", base.HEX)
-add_field(ProtoField.uint64, "video_format_greenmask", "Green Mask", base.HEX)
-add_field(ProtoField.uint64, "video_format_bluemask", "Blue Mask", base.HEX)
+add_field(ProtoField.none, "video.format", "# Video Format #")
+add_field(ProtoField.uint32, "video.format.fps", "FPS", base.DEC)
+add_field(ProtoField.uint32, "video.format.width", "Width", base.DEC)
+add_field(ProtoField.uint32, "video.format.height", "Height", base.DEC)
+add_field(ProtoField.uint32, "video.format.codec", "Codec", base.DEC, video_codec_string)
+add_field(ProtoField.uint32, "video.format.bpp", "Bpp", base.DEC)
+add_field(ProtoField.uint32, "video.format.bytes", "Bytes", base.HEX_DEC)
+add_field(ProtoField.uint64, "video.format.redmask", "Red Mask", base.HEX)
+add_field(ProtoField.uint64, "video.format.greenmask", "Green Mask", base.HEX)
+add_field(ProtoField.uint64, "video.format.bluemask", "Blue Mask", base.HEX)
 
-add_field(ProtoField.none, "video_server_handshake", "# Video - Server Handshake #")
-add_field(ProtoField.uint32, "video_server_handshake_protocol_version", "Protocol Version", base.DEC)
-add_field(ProtoField.uint32, "video_server_handshake_width", "Width", base.DEC)
-add_field(ProtoField.uint32, "video_server_handshake_height", "Height", base.DEC)
-add_field(ProtoField.uint32, "video_server_handshake_fps", "FPS", base.DEC)
-add_field(ProtoField.uint64, "video_server_handshake_reference_timestamp", "Reference Timestamp", base.HEX_DEC)
-add_field(ProtoField.uint32, "video_server_handshake_format_count", "Format Count", base.DEC)
-add_field(ProtoField.none, "video_server_handshake_formats", "Formats")
+add_field(ProtoField.none, "video.server_handshake", "# Video - Server Handshake #")
+add_field(ProtoField.uint32, "video.server_handshake.protocol_version", "Protocol Version", base.DEC)
+add_field(ProtoField.uint32, "video.server_handshake.width", "Width", base.DEC)
+add_field(ProtoField.uint32, "video.server_handshake.height", "Height", base.DEC)
+add_field(ProtoField.uint32, "video.server_handshake.fps", "FPS", base.DEC)
+add_field(ProtoField.uint64, "video.server_handshake.reference_timestamp", "Reference Timestamp", base.HEX_DEC)
+add_field(ProtoField.uint32, "video.server_handshake.format_count", "Format Count", base.DEC)
+add_field(ProtoField.none, "video.server_handshake.formats", "Formats")
 
-add_field(ProtoField.none, "video_client_handshake", "# Video - Client Handshake #")
-add_field(ProtoField.uint32, "video_client_handshake_initial_frameid", "Initial Frame Id", base.HEX_DEC)
-add_field(ProtoField.none, "video_client_handshake_requested_format", "Requested Format")
+add_field(ProtoField.none, "video.client_handshake", "# Video - Client Handshake #")
+add_field(ProtoField.uint32, "video.client_handshake.initial_frameid", "Initial Frame Id", base.HEX_DEC)
+add_field(ProtoField.none, "video.client_handshake.requested_format", "Requested Format")
 
-add_field(ProtoField.none, "video_control", "# Video - Control #")
-add_field(ProtoField.uint32, "video_control_flags", "Flags", base.HEX)
-add_field(ProtoField.bool, "video_control_flags_request_keyframe", "Request Keyframe", 32, nil, video_control_bitmask.RequestKeyframe)
-add_field(ProtoField.bool, "video_control_flags_start_stream", "Start Stream", 32, nil, video_control_bitmask.StartStream)
-add_field(ProtoField.bool, "video_control_flags_stop_stream", "Stop Stream", 32, nil, video_control_bitmask.StopStream)
-add_field(ProtoField.bool, "video_control_flags_queue_depth", "Queue Depth", 32, nil, video_control_bitmask.QueueDepth)
-add_field(ProtoField.bool, "video_control_flags_lost_frames", "Lost Frames", 32, nil, video_control_bitmask.LostFrames)
-add_field(ProtoField.bool, "video_control_flags_last_displayed_frame", "Last Displayed Frame", 32, nil, video_control_bitmask.LastDisplayedFrame)
-add_field(ProtoField.uint32, "video_control_last_displayed_frame", "Last Displayed Frame", base.HEX_DEC)
-add_field(ProtoField.uint64, "video_control_timestamp", "Timestamp", base.HEX_DEC)
-add_field(ProtoField.uint32, "video_control_queue_depth", "Queue Depth", base.HEX_DEC)
-add_field(ProtoField.uint32, "video_control_first_lost_frame", "First Lost Frame", base.HEX_DEC)
-add_field(ProtoField.uint32, "video_control_last_lost_frame", "Last Lost Frame", base.HEX_DEC)
+add_field(ProtoField.none, "video.control", "# Video - Control #")
+add_field(ProtoField.uint32, "video.control.flags", "Flags", base.HEX)
+add_field(ProtoField.bool, "video.control.flags.request_keyframe", "Request Keyframe", 32, nil, video_control_bitmask.RequestKeyframe)
+add_field(ProtoField.bool, "video.control.flags.start_stream", "Start Stream", 32, nil, video_control_bitmask.StartStream)
+add_field(ProtoField.bool, "video.control.flags.stop_stream", "Stop Stream", 32, nil, video_control_bitmask.StopStream)
+add_field(ProtoField.bool, "video.control.flags.queue_depth", "Queue Depth", 32, nil, video_control_bitmask.QueueDepth)
+add_field(ProtoField.bool, "video.control.flags.lost_frames", "Lost Frames", 32, nil, video_control_bitmask.LostFrames)
+add_field(ProtoField.bool, "video.control.flags.last_displayed_frame", "Last Displayed Frame", 32, nil, video_control_bitmask.LastDisplayedFrame)
+add_field(ProtoField.uint32, "video.control.last_displayed_frame", "Last Displayed Frame", base.HEX_DEC)
+add_field(ProtoField.uint64, "video.control.timestamp", "Timestamp", base.HEX_DEC)
+add_field(ProtoField.uint32, "video.control.queue_depth", "Queue Depth", base.HEX_DEC)
+add_field(ProtoField.uint32, "video.control.first_lost_frame", "First Lost Frame", base.HEX_DEC)
+add_field(ProtoField.uint32, "video.control.last_lost_frame", "Last Lost Frame", base.HEX_DEC)
 
-add_field(ProtoField.none, "video_data", "# Video - Data #")
-add_field(ProtoField.uint32, "video_data_flags", "Flags", base.HEX)
-add_field(ProtoField.uint32, "video_data_frameid", "Frame Id", base.HEX_DEC)
-add_field(ProtoField.uint64, "video_data_timestamp", "Timestamp", base.HEX_DEC)
-add_field(ProtoField.uint32, "video_data_total_size", "Total Size", base.HEX_DEC)
-add_field(ProtoField.uint32, "video_data_packet_count", "Packet Count", base.DEC)
-add_field(ProtoField.uint32, "video_data_offset", "Offset", base.HEX_DEC)
-add_field(ProtoField.uint32, "video_data_data_length", "Data Length", base.HEX_DEC)
-add_field(ProtoField.none, "video_data_data", "Data", base.HEX_DEC)
+add_field(ProtoField.none, "video.data", "# Video - Data #")
+add_field(ProtoField.uint32, "video.data.flags", "Flags", base.HEX)
+add_field(ProtoField.uint32, "video.data.frameid", "Frame Id", base.HEX_DEC)
+add_field(ProtoField.uint64, "video.data.timestamp", "Timestamp", base.HEX_DEC)
+add_field(ProtoField.uint32, "video.data.total_size", "Total Size", base.HEX_DEC)
+add_field(ProtoField.uint32, "video.data.packet_count", "Packet Count", base.DEC)
+add_field(ProtoField.uint32, "video.data.offset", "Offset", base.HEX_DEC)
+add_field(ProtoField.uint32, "video.data.data_length", "Data Length", base.HEX_DEC)
+add_field(ProtoField.none, "video.data.data", "Data", base.HEX_DEC)
 
 -- CHAT/AUDIO messages
 local audio_codec = {
@@ -289,35 +290,35 @@ local audio_control_bitmask = {
     Reinitialize = 0x40
 }
 
-add_field(ProtoField.none, "audio_format", "# Audio Format #")
-add_field(ProtoField.uint32, "audio_format_channels", "Channels", base.DEC)
-add_field(ProtoField.uint32, "audio_format_samplerate", "Samplerate", base.DEC)
-add_field(ProtoField.uint32, "audio_format_codec", "Codec", base.DEC, audio_codec_string)
-add_field(ProtoField.uint32, "audio_format_bitdepth", "Bit Depth", base.DEC)
-add_field(ProtoField.uint32, "audio_format_type", "Type", base.DEC, audio_bitdepth_string)
+add_field(ProtoField.none, "audio.format", "# Audio Format #")
+add_field(ProtoField.uint32, "audio.format.channels", "Channels", base.DEC)
+add_field(ProtoField.uint32, "audio.format.samplerate", "Samplerate", base.DEC)
+add_field(ProtoField.uint32, "audio.format.codec", "Codec", base.DEC, audio_codec_string)
+add_field(ProtoField.uint32, "audio.format.bitdepth", "Bit Depth", base.DEC)
+add_field(ProtoField.uint32, "audio.format.type", "Type", base.DEC, audio_bitdepth_string)
 
-add_field(ProtoField.none, "audio_server_handshake", "# Audio - Server Handshake #")
-add_field(ProtoField.uint32, "audio_server_handshake_protocol_version", "Protocol Version", base.DEC)
-add_field(ProtoField.uint64, "audio_server_handshake_reference_timestamp", "Reference Timestamp", base.HEX_DEC)
-add_field(ProtoField.uint32, "audio_server_handshake_format_count", "Format Count", base.DEC)
-add_field(ProtoField.none, "audio_server_handshake_formats", "Formats")
+add_field(ProtoField.none, "audio.server_handshake", "# Audio - Server Handshake #")
+add_field(ProtoField.uint32, "audio.server_handshake.protocol_version", "Protocol Version", base.DEC)
+add_field(ProtoField.uint64, "audio.server_handshake.reference_timestamp", "Reference Timestamp", base.HEX_DEC)
+add_field(ProtoField.uint32, "audio.server_handshake.format_count", "Format Count", base.DEC)
+add_field(ProtoField.none, "audio.server_handshake.formats", "Formats")
 
-add_field(ProtoField.none, "audio_client_handshake", "# Audio - Client Handshake #")
-add_field(ProtoField.uint32, "audio_client_handshake_initial_frameid", "Initial Frame Id", base.HEX_DEC)
-add_field(ProtoField.none, "audio_client_handshake_requested_format", "Requested Format")
+add_field(ProtoField.none, "audio.client_handshake", "# Audio - Client Handshake #")
+add_field(ProtoField.uint32, "audio.client_handshake.initial_frameid", "Initial Frame Id", base.HEX_DEC)
+add_field(ProtoField.none, "audio.client_handshake.requested_format", "Requested Format")
 
-add_field(ProtoField.none, "audio_control", "# Audio - Control #")
-add_field(ProtoField.uint32, "audio_control_flags", "Flags", base.HEX)
-add_field(ProtoField.bool, "audio_control_flags_reinitialize", "Reinitialize", 32, nil, audio_control_bitmask.Reinitialize)
-add_field(ProtoField.bool, "audio_control_flags_start_stream", "Start Stream", 32, nil, audio_control_bitmask.StartStream)
-add_field(ProtoField.bool, "audio_control_flags_stop_stream", "Stop Stream", 32, nil, audio_control_bitmask.StopStream)
+add_field(ProtoField.none, "audio.control", "# Audio - Control #")
+add_field(ProtoField.uint32, "audio.control.flags", "Flags", base.HEX)
+add_field(ProtoField.bool, "audio.control.flags.reinitialize", "Reinitialize", 32, nil, audio_control_bitmask.Reinitialize)
+add_field(ProtoField.bool, "audio.control.flags.start_stream", "Start Stream", 32, nil, audio_control_bitmask.StartStream)
+add_field(ProtoField.bool, "audio.control.flags.stop_stream", "Stop Stream", 32, nil, audio_control_bitmask.StopStream)
 
-add_field(ProtoField.none, "audio_data", "# Audio - Data #")
-add_field(ProtoField.uint32, "audio_data_flags", "Flags", base.HEX)
-add_field(ProtoField.uint32, "audio_data_frameid", "Frame Id", base.HEX_DEC)
-add_field(ProtoField.uint64, "audio_data_timestamp", "Timestamp", base.HEX_DEC)
-add_field(ProtoField.uint32, "audio_data_data_length", "Data Length", base.HEX_DEC)
-add_field(ProtoField.none, "audio_data_data", "Data")
+add_field(ProtoField.none, "audio.data", "# Audio - Data #")
+add_field(ProtoField.uint32, "audio.data.flags", "Flags", base.HEX)
+add_field(ProtoField.uint32, "audio.data.frameid", "Frame Id", base.HEX_DEC)
+add_field(ProtoField.uint64, "audio.data.timestamp", "Timestamp", base.HEX_DEC)
+add_field(ProtoField.uint32, "audio.data.data_length", "Data Length", base.HEX_DEC)
+add_field(ProtoField.none, "audio.data.data", "Data")
 
 -- CONTROL messages
 local streamer_msg_opcode = {
@@ -338,63 +339,63 @@ local streamer_msg_opcode_string = invert(streamer_msg_opcode)
 
 add_field(ProtoField.none, "control", "# Control Protocol #")
 add_field(ProtoField.uint32, "control_prev_sequence", "Previous Sequence (DUP)", base.DEC)
-add_field(ProtoField.uint16, "control_unknown1", "Unknown1", base.HEX_DEC)
-add_field(ProtoField.uint16, "control_unknown2", "Unknown2", base.HEX_DEC)
-add_field(ProtoField.uint16, "control_opcode", "Message OpCode", base.HEX_DEC, streamer_msg_opcode_string)
+add_field(ProtoField.uint16, "control.unknown1", "Unknown1", base.HEX_DEC)
+add_field(ProtoField.uint16, "control.unknown2", "Unknown2", base.HEX_DEC)
+add_field(ProtoField.uint16, "control.opcode", "Message OpCode", base.HEX_DEC, streamer_msg_opcode_string)
 
 -- INPUT messages
-add_field(ProtoField.none, "input_server_handshake", "# Input - Server Handshake #")
-add_field(ProtoField.uint32, "input_server_handshake_protocol_version", "Protocol Version", base.DEC)
-add_field(ProtoField.uint32, "input_server_handshake_desktop_width", "Desktop Width", base.DEC)
-add_field(ProtoField.uint32, "input_server_handshake_desktop_height", "Desktop Height", base.DEC)
-add_field(ProtoField.uint32, "input_server_handshake_max_touches", "Max Touches", base.DEC)
-add_field(ProtoField.uint32, "input_server_handshake_initial_frameid", "Initial Frame Id", base.DEC)
+add_field(ProtoField.none, "input.server_handshake", "# Input - Server Handshake #")
+add_field(ProtoField.uint32, "input.server_handshake.protocol_version", "Protocol Version", base.DEC)
+add_field(ProtoField.uint32, "input.server_handshake.desktop_width", "Desktop Width", base.DEC)
+add_field(ProtoField.uint32, "input.server_handshake.desktop_height", "Desktop Height", base.DEC)
+add_field(ProtoField.uint32, "input.server_handshake.max_touches", "Max Touches", base.DEC)
+add_field(ProtoField.uint32, "input.server_handshake.initial_frameid", "Initial Frame Id", base.DEC)
 
-add_field(ProtoField.none, "input_client_handshake", "# Input - Client Handshake #")
-add_field(ProtoField.uint32, "input_client_handshake_max_touches", "Max Touches", base.DEC)
-add_field(ProtoField.uint64, "input_client_handshake_reference_timestamp", "Reference Timestamp", base.HEX_DEC)
+add_field(ProtoField.none, "input.client_handshake", "# Input - Client Handshake #")
+add_field(ProtoField.uint32, "input.client_handshake.max_touches", "Max Touches", base.DEC)
+add_field(ProtoField.uint64, "input.client_handshake.reference_timestamp", "Reference Timestamp", base.HEX_DEC)
 
-add_field(ProtoField.none, "input_frameack", "# Input - Frame Ack #")
-add_field(ProtoField.uint32, "input_frameack_frameack", "Frame Ack", base.HEX_DEC)
+add_field(ProtoField.none, "input.frameack", "# Input - Frame Ack #")
+add_field(ProtoField.uint32, "input.frameack.frameack", "Frame Ack", base.HEX_DEC)
 
-add_field(ProtoField.none, "input_frame", "# Input - Frame #")
-add_field(ProtoField.uint32, "input_frame_frameid", "Frame", base.HEX_DEC)
-add_field(ProtoField.uint64, "input_frame_timestamp", "Timestamp (sent)", base.HEX_DEC)
-add_field(ProtoField.uint64, "input_frame_created_ts", "Timestamp (created)", base.HEX_DEC)
-add_field(ProtoField.bytes, "input_frame_buttons", "Buttons", base.SPACE)
-add_field(ProtoField.uint8, "input_frame_left_trigger", "Left Trigger", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_right_trigger", "Right Trigger", base.HEX_DEC)
-add_field(ProtoField.uint16, "input_frame_left_thumb_x", "Left Thumb X-Axis", base.HEX_DEC)
-add_field(ProtoField.uint16, "input_frame_left_thumb_y", "Left Thumb Y-Axis", base.HEX_DEC)
-add_field(ProtoField.uint16, "input_frame_right_thumb_x", "Right Thumb X-Axis", base.HEX_DEC)
-add_field(ProtoField.uint16, "input_frame_right_thumb_y", "Right Thumb Y-Axis", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_rumble_trigger_l", "Rumble Trigger (L)", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_rumble_trigger_r", "Rumble Trigger (R)", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_rumble_handle_l", "Rumble Handle (L)", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_rumble_handle_r", "Rumble Handle (R)", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_byte6", "Byte 6", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_byte7", "Byte 7", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_rumble_trigger_l2", "Rumble Trigger (L/Dup)", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_rumble_trigger_r2", "Rumble Trigger (R/Dup)", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_rumble_handle_l2", "Rumble Handle (L/Dup)", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_rumble_handle_r2", "Rumble Handle (R/Dup)", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_byte12", "Byte 12", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_byte13", "Byte 13", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_byte14", "Byte 14", base.HEX_DEC)
+add_field(ProtoField.none, "input.frame", "# Input - Frame #")
+add_field(ProtoField.uint32, "input.frame.frameid", "Frame", base.HEX_DEC)
+add_field(ProtoField.uint64, "input.frame.timestamp", "Timestamp (sent)", base.HEX_DEC)
+add_field(ProtoField.uint64, "input.frame.created_ts", "Timestamp (created)", base.HEX_DEC)
+add_field(ProtoField.bytes, "input.frame.buttons", "Buttons", base.SPACE)
+add_field(ProtoField.uint8, "input.frame.left_trigger", "Left Trigger", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.right_trigger", "Right Trigger", base.HEX_DEC)
+add_field(ProtoField.uint16, "input.frame.left_thumb_x", "Left Thumb X-Axis", base.HEX_DEC)
+add_field(ProtoField.uint16, "input.frame.left_thumb_y", "Left Thumb Y-Axis", base.HEX_DEC)
+add_field(ProtoField.uint16, "input.frame.right_thumb_x", "Right Thumb X-Axis", base.HEX_DEC)
+add_field(ProtoField.uint16, "input.frame.right_thumb_y", "Right Thumb Y-Axis", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.rumble_trigger_l", "Rumble Trigger (L)", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.rumble_trigger_r", "Rumble Trigger (R)", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.rumble_handle_l", "Rumble Handle (L)", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.rumble_handle_r", "Rumble Handle (R)", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.byte6", "Byte 6", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.byte7", "Byte 7", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.rumble_trigger_l2", "Rumble Trigger (L/Dup)", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.rumble_trigger_r2", "Rumble Trigger (R/Dup)", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.rumble_handle_l2", "Rumble Handle (L/Dup)", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.rumble_handle_r2", "Rumble Handle (R/Dup)", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.byte12", "Byte 12", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.byte13", "Byte 13", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.byte14", "Byte 14", base.HEX_DEC)
 
-add_field(ProtoField.uint8, "input_frame_keyboardstate", "KeyboardState", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_mousestate", "MouseState", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_touchstate", "TouchState", base.HEX_DEC)
-add_field(ProtoField.uint8, "input_frame_gamepadstate", "GamepadState", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.keyboardstate", "KeyboardState", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.mousestate", "MouseState", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.touchstate", "TouchState", base.HEX_DEC)
+add_field(ProtoField.uint8, "input.frame.gamepadstate", "GamepadState", base.HEX_DEC)
 
 -- STREAMER WITH HEADER messages
 add_field(ProtoField.none, "change_video_quality", "# Change Video Quality #")
-add_field(ProtoField.uint32, "change_video_quality_unk1", "Unknown1", base.HEX_DEC)
-add_field(ProtoField.uint32, "change_video_quality_unk2", "Unknown2", base.HEX_DEC)
-add_field(ProtoField.uint32, "change_video_quality_unk3", "Unknown3", base.HEX_DEC)
-add_field(ProtoField.uint32, "change_video_quality_unk4", "Unknown4", base.HEX_DEC)
-add_field(ProtoField.uint32, "change_video_quality_unk5", "Unknown5", base.HEX_DEC)
-add_field(ProtoField.uint32, "change_video_quality_unk6", "Unknown6", base.HEX_DEC)
+add_field(ProtoField.uint32, "change_video_quality.unk1", "Unknown1", base.HEX_DEC)
+add_field(ProtoField.uint32, "change_video_quality.unk2", "Unknown2", base.HEX_DEC)
+add_field(ProtoField.uint32, "change_video_quality.unk3", "Unknown3", base.HEX_DEC)
+add_field(ProtoField.uint32, "change_video_quality.unk4", "Unknown4", base.HEX_DEC)
+add_field(ProtoField.uint32, "change_video_quality.unk5", "Unknown5", base.HEX_DEC)
+add_field(ProtoField.uint32, "change_video_quality.unk6", "Unknown6", base.HEX_DEC)
 
 -- IMPORTANT: Add the fields to the proto
 nano_proto.fields = hf
