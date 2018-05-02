@@ -192,12 +192,12 @@ add_field(ProtoField.uint16, "discovery_response.unprotected_payload_length", "U
 add_field(ProtoField.uint16, "discovery_response.version", "Version", base.HEX_DEC)
 add_field(ProtoField.none, "discovery_response.unprotected_payload", "Unprotected Payload")
 add_field(ProtoField.uint32, "discovery_response.flags", "Flags", base.HEX_DEC)
-add_field(ProtoField.uint16, "discovery_response.type", "Type", base.HEX_DEC)
+add_field(ProtoField.uint16, "discovery_response.device_type", "Device Type", base.HEX_DEC)
 add_field(ProtoField.uint16, "discovery_response.name_length", "Name Length", base.HEX_DEC)
 add_field(ProtoField.string, "discovery_response.name", "Name")
 add_field(ProtoField.uint16, "discovery_response.uuid_length", "UUID Length", base.HEX_DEC)
 add_field(ProtoField.string, "discovery_response.uuid", "UUID")
-add_field(ProtoField.bytes, "discovery_response.padding", "Padding", base.SPACE)
+add_field(ProtoField.uint32, "discovery_response.last_error", "Last Error", base.HEX_DEC)
 add_field(ProtoField.uint16, "discovery_response.certificate_length", "Certificate Length", base.HEX_DEC)
 add_field(ProtoField.bytes, "discovery_response.certificate", "Certificate", base.SPACE)
 
@@ -331,7 +331,7 @@ function parse_discovery_response(tvbuf, tree)
     local uuid_length = tvbuf(8 + name_length, 2):uint() + 1
     tree:add(hf.discovery_response_unprotected_payload, tvbuf(0, unprotected_payload_length))
     tree:add(hf.discovery_response_flags, tvbuf(0, 4))
-    tree:add(hf.discovery_response_type, tvbuf(4, 2))
+    tree:add(hf.discovery_response_device_type, tvbuf(4, 2))
     tree:add(hf.discovery_response_name_length, tvbuf(6, 2))
     tree:add(hf.discovery_response_name, tvbuf(8, name_length))
     tree:add(hf.discovery_response_uuid_length, tvbuf(8 + name_length, 2))
@@ -340,7 +340,7 @@ function parse_discovery_response(tvbuf, tree)
     tvbuf = tvbuf(10 + name_length + uuid_length)
     -- For whatever reason, size of cert is off by 1 byte
     local certificate_length = tvbuf(0, 2):uint() - 1
-    tree:add(hf.discovery_response_padding, tvbuf(0, 4))
+    tree:add(hf.discovery_response_last_error, tvbuf(0, 4))
     tree:add(hf.discovery_response_certificate_length, tvbuf(4, 2))
     tree:add(hf.discovery_response_certificate, tvbuf(6, certificate_length))
 end
