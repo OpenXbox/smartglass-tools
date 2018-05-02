@@ -7,7 +7,7 @@
 nano_proto = Proto("NANO-RTP", "Xbox Nano Protocol")
 
 -- Convenience field adding code from: https://github.com/Lekensteyn/kdnet/blob/master/kdnet.lua
--- Thx Mr. Paul Wu (Lekensteyn)
+-- Thx Mr. Peter Wu (Lekensteyn)
 local hf = {}
 function add_field(proto_field_constructor, name, desc, ...)
     local field_name = "nano." .. name

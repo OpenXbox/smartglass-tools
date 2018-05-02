@@ -7,7 +7,7 @@
 smartglass_proto = Proto("XBSG", "Xbox One SmartGlass Protocol")
 
 -- Convenience field adding code from: https://github.com/Lekensteyn/kdnet/blob/master/kdnet.lua
--- Thx Mr. Paul Wu (Lekensteyn)
+-- Thx Mr. Peter Wu (Lekensteyn)
 local hf = {}
 function add_field(proto_field_constructor, name, desc, ...)
     local field_name = "xbox_sg." .. name
