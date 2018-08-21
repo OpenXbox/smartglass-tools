@@ -621,31 +621,29 @@ function parse_streamer_message(tvbuf, pinfo, tree, channel_id)
     local data = nil
     local packet_type = 0
     local chan_class = assigned_channels[channel_id]
+    local flags = tvbuf(0, 4):le_uint()
 
-    if ip_proto_f().value == 6 then
-        -- TCP
-        tree:add_le(hf.streamer_msg, tvbuf(0, 20))
-        tree:add_le(hf.streamer_msg_flags, tvbuf(0, 4))
+    tree:add_le(hf.streamer_msg, tvbuf(0, 20))
+    tree:add_le(hf.streamer_msg_flags, tvbuf(0, 4))
+
+    local pos = 4
+    if bit.band(flags, 0x1) == 0x1 then
         tree:add_le(hf.streamer_msg_sequence_num, tvbuf(4, 4))
         tree:add_le(hf.streamer_msg_prev_sequence_num, tvbuf(8, 4))
-        tree:add_le(hf.streamer_msg_packet_type, tvbuf(12, 4))
-        if chan_class ~= channel_class.Control then
-            tree:add_le(hf.streamer_msg_payload_size, tvbuf(16, 4))
-            local payload_size = tvbuf(16, 4):le_uint()
-            packet_type = tvbuf(12 ,4):le_uint()
-            data = tvbuf(20, payload_size)
-        else
-            data = tvbuf(16)
-        end
+        pos = 12
+    end
 
+    packet_type = tvbuf(pos, 4):le_uint()
+    tree:add_le(hf.streamer_msg_packet_type, tvbuf(pos, 4))
+    pos = pos + 4
+
+    if chan_class ~= channel_class.Control then
+        local payload_size = tvbuf(pos, 4):le_uint()
+        tree:add_le(hf.streamer_msg_payload_size, tvbuf(pos, 4))
+        pos = pos + 4
+        data = tvbuf(pos, payload_size)
     else
-        tree:add_le(hf.streamer_msg, tvbuf(0, 12))
-        tree:add_le(hf.streamer_msg_flags, tvbuf(0, 4))
-        tree:add_le(hf.streamer_msg_packet_type, tvbuf(4, 4))
-        tree:add_le(hf.streamer_msg_payload_size, tvbuf(8, 4))
-        local payload_size = tvbuf(8, 4):le_uint()
-        packet_type = tvbuf(4, 4):le_uint()
-        data = tvbuf(12, payload_size)
+        data = tvbuf(pos) -- 16
     end
 
     if channel_class.Video == chan_class then
