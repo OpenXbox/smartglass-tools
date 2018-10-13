@@ -623,7 +623,7 @@ function parse_streamer_message(tvbuf, pinfo, tree, channel_id)
     local chan_class = assigned_channels[channel_id]
     local flags = tvbuf(0, 4):le_uint()
 
-    tree:add_le(hf.streamer_msg, tvbuf(0, 20))
+    tree:add_le(hf.streamer_msg, tvbuf)
     tree:add_le(hf.streamer_msg_flags, tvbuf(0, 4))
 
     local pos = 4
