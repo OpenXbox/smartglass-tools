@@ -12,6 +12,17 @@ PERSONAL_CONFIG_DIR    $HOME/.wireshark                   %APPDATA%\\Wireshark
 PERSONAL_PLUGINS_DIR   $HOME/.wireshark/plugins           %APPDATA%\\Wireshark\\plugins
 ===================== ================================== ============================
 
+Usage
+-----
+
+The SmartGlass protocol (UDP port 5050) gets dissected automatically.
+For Nano, the individual TCP and UDP stream needs to be selected.
+
+1. Mark a packet of the new UDP and TCP stream that appears right after the JSON messaging of SmartGlass
+2. Right-click the packet
+3. Choose **Decode As**
+4. Navigate to **NANO-RDP** in the dropdown list
+5. Confirm, Save
 
 Install by referencing paths to lua dissector files
 ---------------------------------------------------
