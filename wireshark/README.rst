@@ -2,15 +2,16 @@
 Wireshark dissectors
 ====================
 
+.. image:: wireshark.png
+  :alt: Wireshark dissector
 
-===================== ================================== ============================
-Variable name                  Mac OSX value                 Windows value
---------------------- ---------------------------------- ----------------------------
-GLOBAL_CONFIG_DIR      /usr/share/Wireshark               %WIRESHARK%
-GLOBAL_PLUGINS_DIR     /usr/lib/wireshark/plugins/1.7.1   %WIRESHARK%\\plugins\\1.7.1
-PERSONAL_CONFIG_DIR    $HOME/.wireshark                   %APPDATA%\\Wireshark
-PERSONAL_PLUGINS_DIR   $HOME/.wireshark/plugins           %APPDATA%\\Wireshark\\plugins
-===================== ================================== ============================
+Find wireshark plugins folder
+-----------------------------
+
+1. Start wireshark
+2. In the top navigation bar, select **Help -> About Wireshark**
+3. Select tab **Folders**
+4. Look for **Personal/Global Lua plugins**
 
 Usage
 -----
@@ -27,9 +28,9 @@ For Nano, the individual TCP and UDP stream needs to be selected.
 Install by referencing paths to lua dissector files
 ---------------------------------------------------
 
-NOTE: For **PERSONAL_CONFIG_DIR** you have to create that file first
+NOTE: For **PERSONAL Lua plugins directory** you have to create that file first
 
-1. Open up *CONFIG_DIR*/init.lua
+1. Open up *Lua plugins dir*/init.lua
 2. Add the following **AT THE END** of the file
 
 ::
@@ -42,6 +43,6 @@ NOTE: For **PERSONAL_CONFIG_DIR** you have to create that file first
 Install by moving lua dissector files
 -------------------------------------
 
-1. Go to *PLUGINS_DIR*
-2. Create a new folder (f.e. '*smartglass*')
+1. Go to *Lua plugins dir*
+2. Create a new folder (f.e. 'smartglass')
 3. Move **smartglass.lua** and **nano.lua** to that new folder
