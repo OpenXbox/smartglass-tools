@@ -23,8 +23,8 @@ For Nano, the individual TCP and UDP stream needs to be selected.
 2. Right-click the packet
 3. Choose **Decode As**
 4. Select field **Current**
-4. Navigate to **NANO-RTP** in the dropdown list
-5. Confirm, Save
+5. Navigate to **NANO-RTP** in the dropdown list
+6. Confirm, Save
 
 Install by referencing paths to lua dissector files
 ---------------------------------------------------
